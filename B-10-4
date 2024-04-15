@@ -1,0 +1,118 @@
+import pyxel
+import math
+
+pyxel.init(200, 200)
+
+player_x = 100
+player_y = 190
+player_speed = 2
+lives = 3
+score = 0
+multiplier = 1
+miss = 0
+
+balls = []
+num_balls = 3
+
+multiplier_ball = {'x': pyxel.rndi(0, 199), 'y': pyxel.rndi(0, 199), 'speed_x': (pyxel.rndf(0, 1) - 0.5) * 4, 'speed_y': (pyxel.rndf(0, 1) - 0.5) * 4, 'type': 'multiplier'}
+
+for _ in range(num_balls):
+    ball = {'x': pyxel.rndi(0, 199), 'y': 0, 'angle': pyxel.rndi(30, 150), 'speed': 1}
+    balls.append(ball)
+
+last_update_time = pyxel.frame_count
+
+
+def calculate_distance(x1, y1, x2, y2):
+    return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+
+
+def update():
+    global player_x, player_y, lives, balls, multiplier_ball, score, multiplier, miss, last_update_time
+
+    current_time = pyxel.frame_count
+    elapsed_time = current_time - last_update_time
+    last_update_time = current_time
+
+    if lives > 0:
+        if pyxel.btn(pyxel.KEY_LEFT) and player_x > 0:
+            player_x -= player_speed
+
+        if pyxel.btn(pyxel.KEY_RIGHT) and player_x < 160:
+            player_x += player_speed
+
+        for ball in balls:
+            ball['x'] += pyxel.cos(ball['angle']) * ball['speed']
+            ball['y'] += pyxel.sin(ball['angle']) * ball['speed']
+
+            if ball['x'] >= 200 or ball['x'] <= 0:
+                ball['angle'] = pyxel.rndi(30, 150)
+                ball['speed'] = 1
+
+            if ball['y'] >= 200:
+                ball['angle'] = pyxel.rndi(30, 150)
+                ball['speed'] = 1
+                miss += 1
+                if miss < lives:
+                    ball['x'] = pyxel.rndi(0, 199)
+                    ball['y'] = 0
+
+        multiplier_ball['x'] += multiplier_ball['speed_x']
+        multiplier_ball['y'] += multiplier_ball['speed_y']
+
+        if multiplier_ball['x'] >= 200 or multiplier_ball['x'] <= 0:
+            multiplier_ball['speed_x'] *= -1
+
+        if multiplier_ball['y'] >= 200 or multiplier_ball['y'] <= 0:
+            multiplier_ball['speed_y'] *= -1
+
+        if calculate_distance(player_x, player_y, multiplier_ball['x'], multiplier_ball['y']) < 10:
+            multiplier += 1
+            score += multiplier
+            reset_multiplier_ball()
+
+        for ball in balls:
+            if ball['y'] >= 200:
+                miss += 1
+                if miss < lives:
+                    ball['angle'] = pyxel.rndi(30, 150)
+                    ball['speed'] = 1
+                    ball['x'] = pyxel.rndi(0, 199)
+                    ball['y'] = 0
+
+    if miss >= lives:
+        lives = 0
+        miss = lives
+
+    if lives == 0:
+        miss = lives
+
+
+def draw():
+    global player_x, player_y, lives, balls, multiplier_ball, score, miss, multiplier
+
+    pyxel.cls(7)
+
+    if miss < lives:
+        pyxel.text(10, 10, f"Lives: {lives - miss}", 9)
+        pyxel.text(10, 20, f"Score: {score}", 11)
+        pyxel.text(10, 30, f"Multiplier: {multiplier}x", 8)
+        pyxel.rect(player_x - 20, player_y - 5, 40, 10, 9)
+
+        for ball in balls:
+            pyxel.circ(ball['x'], ball['y'], 10, 6)
+
+        pyxel.circ(multiplier_ball['x'], multiplier_ball['y'], 10, 8)
+    else:
+        pyxel.text(80, 100, "Game Over", 7)
+
+
+def reset_multiplier_ball():
+    global multiplier_ball
+    multiplier_ball['x'] = pyxel.rndi(0, 199)
+    multiplier_ball['y'] = pyxel.rndi(0, 199)
+    multiplier_ball['speed_x'] = (pyxel.rndf(0, 1) - 0.5) * 4
+    multiplier_ball['speed_y'] = (pyxel.rndf(0, 1) - 0.5) * 4
+
+
+pyxel.run(update, draw)
