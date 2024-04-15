@@ -1,0 +1,49 @@
+import pyxel
+
+
+class LineDrawingApp:
+    def __init__(self):
+        pyxel.init(200, 200)
+        pyxel.mouse(visible=True)
+
+
+        self.lines = []
+        self.dragging = False
+        self.start_pos = (0, 0)  
+        self.space_key_pressed = 0
+
+
+        pyxel.run(self.update, self.draw)
+
+
+    def update(self):
+        if pyxel.btnp(pyxel.KEY_SPACE):
+            if self.dragging:
+                self.lines.append((self.start_pos, (pyxel.mouse_x, pyxel.mouse_y)))
+                self.dragging = False
+            else:
+                self.start_pos = (pyxel.mouse_x, pyxel.mouse_y)
+                self.dragging = True
+
+
+            self.space_key_pressed += 1
+
+
+            if self.space_key_pressed % 2 == 1:
+                self.lines = []
+
+
+    def draw(self):
+        pyxel.cls(0)
+
+        
+        for line in self.lines:
+            pyxel.line(line[0][0], line[0][1], line[1][0], line[1][1], 7)
+
+
+        if self.dragging:
+            pyxel.line(self.start_pos[0], self.start_pos[1], pyxel.mouse_x, pyxel.mouse_y, 7)
+
+
+if __name__ == "__main__":
+    LineDrawingApp()
