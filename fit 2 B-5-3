@@ -1,0 +1,48 @@
+import pyxel
+import random
+
+pyxel.init(200, 200)
+pyxel.cls(7)
+
+def get_random_color():
+    return random.randint(0, 15)
+
+
+for a in range(0, 101, 10):
+    pyxel.line(a, 0, a+100, 200, get_random_color())
+
+
+for a in range(0, 201, 10):
+    pyxel.line(a, 0, random.randint(0, 200), 200-a, get_random_color())
+
+
+for a in range(0, 201, random.randint(10, 30)):
+    for b in range(0, 201, random.randint(10, 30)):
+        pyxel.line(a, random.randint(0, 200), b, 200, get_random_color())
+
+for a in range(10, 200, random.randint(10, 30)):
+    for b in range(10, 200, random.randint(10, 30)):
+        if ((a-10)/20) % 2 == 0:
+            if ((b-10)/20) % 2 == 0:
+                pyxel.circ(a, b, random.randint(5, 20), get_random_color())
+            else:
+                pyxel.circ(a, b, random.randint(5, 20), get_random_color())
+        else:
+            if ((b-10)/20) % 2 == 0:
+                pyxel.circ(a, b, random.randint(5, 20), get_random_color())
+            else:
+                pyxel.circ(a, b, random.randint(5, 20), get_random_color())
+
+
+for a in range(10, 200, random.randint(10, 30)):
+    for b in range(10, 200, random.randint(10, 30)):
+        if a + b <= 100:
+            pyxel.circ(a, b, random.randint(5, 20), get_random_color())
+        elif a + b <= 200:
+            pyxel.circ(a, b, random.randint(5, 20), get_random_color())
+        elif a + b <= 300:
+            pyxel.circ(a, b, random.randint(5, 20), get_random_color())
+        elif a + b <= 400:
+            pyxel.circ(a, b, random.randint(5, 20), get_random_color())
+
+pyxel.show()
