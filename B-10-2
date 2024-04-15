@@ -1,52 +1,52 @@
 import pyxel
 
-pyxel.init(200, 200)
 
-balls = []
-num_balls = 3
+pyxel.init(200,200)
 
-for _ in range(num_balls):
-    ball = {
-        "x": pyxel.rnd(200),
-        "y": 0,
-        "angle": pyxel.rnd(30, 150),
-        "vx": pyxel.cos(angle),
-        "vy": pyxel.sin(angle),
-        "speed": 1,
-        "point": 0,
-        "t": 0,
-    }
-    balls.append(ball)
 
-padx = 100
+ballx = [pyxel.rndi(0,199),pyxel.rndi(0,199),pyxel.rndi(0,199)]  
+bally = [0,0,0]
+angle = [pyxel.rndi(30,150),pyxel.rndi(30,150),pyxel.rndi(30,150)]
+vx = [pyxel.cos(angle[0]),pyxel.cos(angle[1]),pyxel.cos(angle[2])]
+vy = [pyxel.sin(angle[0]),pyxel.sin(angle[1]),pyxel.sin(angle[2])]
+padx = 100  
+speed = [1,1,1]  
+point = 0  
+t = [0,0,0]
+
 
 def update():
-    global padx
-    for ball in balls:
-        ball["x"] += ball["vx"] * ball["speed"]
-        ball["y"] += ball["vy"] * ball["speed"]
-        padx = pyxel.mouse_x
-        if ball["y"] >= 200:
-            ball["x"] = pyxel.rnd(200)
-            ball["y"] = 0
-            ball["angle"] = pyxel.rnd(30, 150)
-            ball["vx"] = pyxel.cos(ball["angle"])
-            ball["vy"] = pyxel.sin(ball["angle"])
-            ball["speed"] += 1
-            ball["t"] = 0
+    global ballx, bally, vx, vy, padx, speed, point, t
+    padx = pyxel.mouse_x
+    for i in range(0, 3):
+        ballx[i] += vx[i] * speed[i]
+        bally[i] += vy[i] * speed[i]
 
-        if ball["x"] >= 200 or ball["x"] <= 0:
-            ball["vx"] = -ball["vx"]
-        if ball["y"] >= 195 and padx - 20 <= ball["x"] <= padx + 20 and ball["t"] == 0:
-            ball["t"] = 1
-            ball["point"] += 1
+        
+        if bally[i] >= 200:
+            ballx[i] = pyxel.rndi(0,199)
+            bally[i] = 0
+            angle[i] = pyxel.rndi(30, 150)
+            vx[i] = pyxel.cos(angle[i])
+            vy[i] = pyxel.sin(angle[i])
+            speed[i] += 1
+            t[i] = 0
 
+           
+        if ballx[i] >= 200 or ballx[i] <= 0:
+            vx[i] *= -1
+        if bally[i] >= 195 and padx-20 <= ballx[i] <= padx+20 and t[i] == 0:
+            t[i] = 1
+            point += 1 #list number = [i].
+
+        
 def draw():
+    global ballx, bally, vx, vy, padx, point
     pyxel.cls(7)
-    for ball in balls:
-        pyxel.circ(ball["x"], ball["y"], 10, 6)
-    pyxel.rect(padx - 20, 195, 40, 5, 14)
-    total_points = sum(ball["point"] for ball in balls)
-    pyxel.text(10, 10, "score: " + str(total_points), 0)
+    pyxel.text(10, 10, "score : " + str(point), 0)
+    pyxel.rect(padx-20, 195, 40, 5, 14)
+    for i in range(0, 3):
+        pyxel.circ(ballx[i], bally[i], 10, 6)
 
+        
 pyxel.run(update, draw)
