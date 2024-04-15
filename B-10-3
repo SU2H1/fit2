@@ -1,0 +1,66 @@
+import pyxel
+
+
+pyxel.init(200,200)
+
+
+ballx = [pyxel.rndi(0,199)]  
+bally = [0]
+angle = [pyxel.rndi(30,150)]
+vx = [pyxel.cos(angle[0])]
+vy = [pyxel.sin(angle[0])]
+padx = 100  
+speed = [1]  
+point = 0  
+t = [0]
+
+
+def update():
+    global ballx, bally, vx, vy, padx, speed, point, t
+    padx = pyxel.mouse_x
+
+    
+    for i in range(0, len(ballx)): 
+        ballx[i] += vx[i] * speed[i]
+        bally[i] += vy[i] * speed[i]
+
+        
+        if bally[i] >= 200:
+            ballx[i] = pyxel.rndi(0,199)
+            bally[i] = 0
+            angle[i] = pyxel.rndi(30, 150)
+            vx[i] = pyxel.cos(angle[i])
+            vy[i] = pyxel.sin(angle[i])
+            speed[i] += 1
+            t[i] = 0
+
+           
+        if ballx[i] >= 200 or ballx[i] <= 0:
+            vx[i] *= -1
+        if bally[i] >= 195 and padx-20 <= ballx[i] <= padx+20 and t[i] == 0:
+            t[i] = 1
+            point += 1
+
+
+            if point == 10 * len(ballx):
+                for i in range(len(ballx)):
+                    speed[i] = 1
+                ballx.append(pyxel.rndi(0,199))
+                bally.append(0)
+                angle.append(pyxel.rndi(30,150))
+                vx.append(pyxel.cos(angle[len(ballx)-1]))
+                vy.append(pyxel.sin(angle[len(ballx)-1]))
+                speed.append(1)
+                t.append(0)
+
+            
+def draw():
+    global ballx, bally, vx, vy, padx, point
+    pyxel.cls(7)
+    pyxel.text(10, 10, "score : " + str(point), 0)
+    pyxel.rect(padx-20, 195, 40, 5, 14)
+    for i in range(0, len(ballx)):
+        pyxel.circ(ballx[i], bally[i], 10, 6)
+
+        
+pyxel.run(update, draw)
