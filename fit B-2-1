@@ -1,7 +1,7 @@
 import pyxel
 
-pyxel.init(200, 200) #200x200 scree
+pyxel.init(200, 200)
 pyxel.cls(7)
-for a in range(0, 101, 10): #(From 0 to 101 in 10 intervals)
-    pyxel.line(a, 0, a+100, 200, 0) #(start x axis, start y axis, finish x axis, finish y axis) 
+for a in range(0, 101, 10):
+    pyxel.line(a, 0, a+100, 200, 0) 
 pyxel.show()
