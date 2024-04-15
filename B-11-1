@@ -1,0 +1,91 @@
+import pyxel
+
+
+#200x200
+pyxel.init(200, 200)
+
+
+class Ball:
+    def __init__(self):
+
+        
+        self.x = pyxel.rndi(0, 199)
+        self.y = 0
+        self.angle = pyxel.rndi(30, 150)
+        self.vx = pyxel.cos(self.angle)
+        self.vy = pyxel.sin(self.angle)
+        self.t = 0
+
+
+padx = 100
+speed = 2
+score = 0
+miss = 0
+
+
+balls = [Ball()]
+
+
+def update():
+    global balls, padx, speed, score, miss
+
+    
+    if miss >= 10:
+        return
+
+    
+    padx = pyxel.mouse_x 
+    
+    for i in balls:  
+        i.x += i.vx * speed
+        i.y += i.vy * speed
+
+        
+        if i.y >= 200:
+            if i.t == 0:
+                miss += 1
+            balls.remove(i)
+            balls.append(Ball())
+            speed += 0.5
+
+            
+        if i.x >= 200 or i.x <= 0:
+            i.vx *= -1
+
+            
+        if i.y >= 195 and padx - 20 <= i.x <= padx + 20 and i.t == 0:
+            i.t = 1
+            score += 1
+            if score % 10 == 0:
+                speed = 2
+                balls.append(Ball())
+
+
+def draw():
+    global balls, padx, score, miss
+
+    
+    if miss < 10:
+        pyxel.cls(7)
+
+        
+        for i in balls:
+            pyxel.circ(i.x, i.y, 10, 6)  #Draw a circle representing a ball
+
+        
+        pyxel.text(10, 10, "score : " + str(score), 0)
+        pyxel.text(10, 20, "miss : " + str(miss), 0)
+
+        
+        pyxel.rect(padx - 20, 195, 40, 5, 14)
+
+
+    else:
+        pyxel.cls(0)  # Clear the screen with color index 0
+
+        
+        pyxel.text(80, 100, "game over", 7)
+        pyxel.text(70, 110, "final score : " + str(score), 7) 
+
+
+pyxel.run(update, draw)
