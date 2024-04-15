@@ -1,0 +1,23 @@
+import pyxel
+
+
+pyxel.init(200, 200)
+
+
+a = 100
+direction = 1
+
+
+def update():
+    global a, direction
+    if pyxel.btnp(pyxel.KEY_SPACE):
+        direction = -direction
+    a += direction
+
+
+def draw():
+    pyxel.cls(7)
+    pyxel.circ(a, a, 10, 0)
+
+
+pyxel.run(update, draw)
