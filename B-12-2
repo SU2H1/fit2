@@ -1,0 +1,98 @@
+import pyxel
+
+
+pyxel.init(200, 200)
+
+
+class Ball:
+    speed = 2
+
+    
+    def __init__(self):
+        self.x = pyxel.rndi(0, 199)
+        self.y = 0
+        angle = pyxel.rndi(30, 150)
+        self.vx = pyxel.cos(angle)
+        self.vy = pyxel.sin(angle)
+        self.t = 0
+
+        
+    def restart(self):
+        self.x = pyxel.rndi(0, 199)
+        self.y = 0
+        angle = pyxel.rndi(30, 150)
+        self.vx = pyxel.cos(angle)
+        self.vy = pyxel.sin(angle)
+        self.t = 0
+
+        
+    def move(self):
+        self.x += self.vx * Ball.speed
+        self.y += self.vy * Ball.speed
+        if self.x >= 200 or self.x <= 0:
+            self.vx *= -1
+
+            
+class Pad:
+    def __int__(self):
+        self.x = 100
+
+
+    def move(self):
+        self.x = pyxel.mouse_x
+
+        
+score = 0
+miss = 0
+
+
+balls = [Ball()]
+pad = Pad()
+
+
+def update():
+    global balls, pad, speed, score, miss
+    if miss >= 10:
+        return
+
+    
+    pad.move()
+
+    
+    for i in balls:
+        i.move()
+
+        
+        if i.y >= 200:
+            if i.t == 0:
+                miss += 1
+            i.restart()
+            Ball.speed += 0.5
+
+            
+        if i.y >= 195 and pad.x - 20 <= i.x <= pad.x + 20 and i.t == 0:
+            i.t = 1
+            score += 1
+            if score % 10 == 0:
+                Ball.speed = 2
+                balls.append(Ball())
+
+            
+def draw():
+    global balls, pad, score, miss
+    if miss < 10:
+        pyxel.cls(7)
+        for i in balls:
+            pyxel.circ(i.x, i.y, 10, 6)
+        pyxel.text(10, 10, "score : " + str(score), 0)
+        pyxel.text(10, 20, "miss : " + str(miss), 0)
+        pyxel.rect(pad.x - 20, 195, 40, 5, 14)
+
+        
+    else:
+        pyxel.cls(0)
+        pyxel.text(80, 100, "game over", 7)
+        pyxel.text(70, 110, "final score : " + str(score), 7)
+
+
+pyxel.run(update, draw)
