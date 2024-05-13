@@ -1,0 +1,1 @@
+Hello everyone, this is SU2H1. This is a repositoy of fit 2 answers and is provided by a friend of mine. I got through fit2 thanks to my friend. I believe that the solution to these prgramming questions should not be gatekept so here you are. I trust you to pass this on
